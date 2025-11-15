@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaGrow - Free & Paid Followers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .instagram-gradient {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+        }
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: black;
+            max-width: 400px;
+            width: 90%;
+        }
+        .free-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Payment Popup -->
+    <div id="paymentPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4" id="popupTitle">Payment Required</h2>
+            
+            <div class="bg-white p-4 rounded-lg border-2 border-green-500 mb-4">
+                <div id="paymentSection">
+                    <!-- QR Code & Payment Details -->
+                    <div class="mb-4">
+                        <div class="bg-gray-100 p-4 rounded-lg mb-3 text-center">
+                            <i class="fas fa-qrcode text-4xl text-gray-600 mb-2"></i>
+                            <p class="text-sm text-gray-600">Scan QR Code to Pay</p>
+                        </div>
+                        
+                        <div class="bg-yellow-100 p-3 rounded-lg">
+                            <p class="text-sm text-yellow-800 font-bold">
+                                <i class="fas fa-user mr-1"></i>
+                                Pawan Gupta
+                            </p>
+                            <p class="text-sm text-yellow-800">
+                                <i class="fas fa-phone mr-1"></i>
+                                9956708456@fam
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- UPI Reference Input -->
+                    <div class="mb-4 text-left">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-receipt mr-1"></i>
+                            UPI Transaction ID *
+                        </label>
+                        <input type="text" 
+                               id="referenceId"
+                               placeholder="Enter UPI Transaction ID"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 text-black"
+                               required>
+                    </div>
+                </div>
+
+                <div id="freeSection" class="hidden">
+                    <!-- Free Order Confirmation -->
+                    <div class="bg-green-100 p-4 rounded-lg mb-4">
+                        <i class="fas fa-gift text-4xl text-green-600 mb-3"></i>
+                        <h3 class="text-lg font-bold text-green-800">FREE ORDER</h3>
+                        <p class="text-sm text-green-700">No payment required for free followers!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-3 rounded-lg mb-4">
+                <p class="text-sm text-blue-800 font-bold" id="paymentAmountDisplay">
+                    Amount: ₹0
+                </p>
+                <p class="text-xs text-blue-600" id="orderIdDisplay"></p>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="processOrder()" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600" id="confirmButton">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    CONFIRM PAYMENT
+                </button>
+                <button onclick="closePaymentPopup()" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div id="successPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="text-green-500 text-6xl mb-4">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4" id="successTitle">Order Confirmed!</h2>
+            <p class="text-gray-600 mb-2" id="successMessage">Your order has been confirmed</p>
+            <p class="text-gray-600 mb-4">Delivery within 24 hours</p>
+            
+            <button onclick="openWhatsApp()" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold mb-3 hover:bg-green-600">
+                <i class="fab fa-whatsapp mr-2"></i>
+                Message on WhatsApp
+            </button>
+            
+            <button onclick="closePopup()" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl font-bold mb-4">
+                <i class="fab fa-instagram mr-3"></i>
+                InstaGrow Pro
+            </h1>
+            <p class="text-xl">Free & Paid Followers</p>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <section class="py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-gray-800 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">Get Instagram Followers</h2>
+                
+                <form id="orderForm" class="max-w-md mx-auto">
+                    <input type="text" id="username" placeholder="Instagram Username" 
+                           class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-4 focus:outline-none focus:border-blue-500" required>
+                    
+                    <input type="email" id="email" placeholder="Email Address" 
+                           class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-4 focus:outline-none focus:border-blue-500" required>
+
+                    <input type="tel" id="phone" placeholder="WhatsApp Number" 
+                           class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-4 focus:outline-none focus:border-blue-500" required>
+
+                    <select id="package" class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-6 focus:outline-none focus:border-blue-500" onchange="updatePrice()">
+                        <option value="10" data-price="0">10 Followers - FREE</option>
+                        <option value="500" data-price="99">500 Followers - ₹99</option>
+                        <option value="1000" data-price="149">1000 Followers - ₹149</option>
+                        <option value="5000" data-price="499">5000 Followers - ₹499</option>
+                    </select>
+
+                    <div class="bg-yellow-500 text-black p-3 rounded-lg mb-4 text-center font-bold" id="priceDisplay">
+                        Amount: ₹0
+                    </div>
+
+                    <button type="button" onclick="processOrderBasedOnPackage()" 
+                            class="w-full instagram-gradient text-white py-4 rounded-lg font-bold text-lg hover:opacity-90 transition duration-300">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        PLACE ORDER
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section class="py-12 px-4 bg-gray-800">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Orders Dashboard</h2>
+            <div class="bg-gray-900 rounded-2xl p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-6">
+                    <div class="bg-green-600 p-4 rounded-lg">
+                        <div class="text-3xl font-bold" id="totalOrders">0</div>
+                        <div>Total Orders</div>
+                    </div>
+                    <div class="bg-blue-600 p-4 rounded-lg">
+                        <div class="text-3xl font-bold" id="totalRevenue">₹0</div>
+                        <div>Total Revenue</div>
+                    </div>
+                    <div class="bg-purple-600 p-4 rounded-lg">
+                        <div class="text-3xl font-bold" id="freeOrders">0</div>
+                        <div>Free Orders</div>
+                    </div>
+                    <div class="bg-yellow-600 p-4 rounded-lg">
+                        <div class="text-3xl font-bold" id="paidOrders">0</div>
+                        <div>Paid Orders</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-xl font-bold mb-4">Recent Orders:</h3>
+                    <div id="orderList" class="space-y-2">
+                        <!-- Orders will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Configuration
+        const ADMIN_WHATSAPP = "917080562910";
+        
+        let currentOrder = null;
+        let isFreeOrder = false;
+
+        // Update price display
+        function updatePrice() {
+            const packageSelect = document.getElementById('package');
+            const selectedOption = packageSelect.options[packageSelect.selectedIndex];
+            const price = parseInt(selectedOption.getAttribute('data-price'));
+            document.getElementById('priceDisplay').textContent = `Amount: ₹${price}`;
+            
+            // Check if free package
+            isFreeOrder = (price === 0);
+        }
+
+        // Initialize
+        updatePrice();
+
+        // Process order based on package type
+        function processOrderBasedOnPackage() {
+            const packageSelect = document.getElementById('package');
+            const selectedOption = packageSelect.options[packageSelect.selectedIndex];
+            const price = parseInt(selectedOption.getAttribute('data-price'));
+            const packageName = selectedOption.textContent;
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            if(!username || !email || !phone) {
+                alert('Please fill all details');
+                return;
+            }
+
+            // Create order
+            currentOrder = {
+                id: 'ORD' + Date.now(),
+                username: username,
+                email: email,
+                phone: phone,
+                package: packageName,
+                price: price,
+                status: 'pending',
+                timestamp: new Date().toLocaleString('hi-IN'),
+                type: (price === 0) ? 'free' : 'paid'
+            };
+
+            // If free order, process directly
+            if (price === 0) {
+                showFreeOrderPopup();
+            } else {
+                showPaymentPopup();
+            }
+        }
+
+        // Show payment popup for paid orders
+        function showPaymentPopup() {
+            document.getElementById('popupTitle').textContent = 'Payment Required';
+            document.getElementById('paymentSection').classList.remove('hidden');
+            document.getElementById('freeSection').classList.add('hidden');
+            document.getElementById('confirmButton').innerHTML = '<i class="fas fa-check-circle mr-2"></i>CONFIRM PAYMENT';
+            
+            document.getElementById('paymentAmountDisplay').textContent = `Amount: ₹${currentOrder.price}`;
+            document.getElementById('orderIdDisplay').textContent = `Order ID: ${currentOrder.id}`;
+            
+            // Clear previous inputs
+            document.getElementById('referenceId').value = '';
+            
+            document.getElementById('paymentPopup').style.display = 'block';
+        }
+
+        // Show free order popup
+        function showFreeOrderPopup() {
+            document.getElementById('popupTitle').textContent = 'Free Order Confirmation';
+            document.getElementById('paymentSection').classList.add('hidden');
+            document.getElementById('freeSection').classList.remove('hidden');
+            document.getElementById('confirmButton').innerHTML = '<i class="fas fa-gift mr-2"></i>CONFIRM FREE ORDER';
+            
+            document.getElementById('paymentAmountDisplay').textContent = 'Amount: ₹0 (FREE)';
+            document.getElementById('orderIdDisplay').textContent = `Order ID: ${currentOrder.id}`;
+            
+            document.getElementById('paymentPopup').style.display = 'block';
+        }
+
+        // Process order (both free and paid)
+        function processOrder() {
+            if (!currentOrder) return;
+
+            if (currentOrder.price === 0) {
+                // Free order - no payment verification needed
+                currentOrder.status = 'confirmed';
+                completeOrder();
+            } else {
+                // Paid order - verify payment details
+                const referenceId = document.getElementById('referenceId').value;
+                if (!referenceId) {
+                    alert('Please enter UPI Transaction ID');
+                    return;
+                }
+                
+                currentOrder.reference_id = referenceId;
+                currentOrder.status = 'paid';
+                completeOrder();
+            }
+        }
+
+        // Complete order process
+        function completeOrder() {
+            // Save order
+            saveOrder(currentOrder);
+
+            // Send WhatsApp notification
+            sendWhatsAppNotification(currentOrder);
+
+            // Show success popup
+            document.getElementById('paymentPopup').style.display = 'none';
+            
+            // Update success message based on order type
+            if (currentOrder.price === 0) {
+                document.getElementById('successTitle').textContent = 'Free Order Confirmed!';
+                document.getElementById('successMessage').textContent = 'Your free followers will be delivered soon!';
+            } else {
+                document.getElementById('successTitle').textContent = 'Payment Verified!';
+                document.getElementById('successMessage').textContent = 'Your payment has been verified successfully!';
+            }
+            
+            document.getElementById('successPopup').style.display = 'block';
+
+            // Reset form
+            document.getElementById('orderForm').reset();
+            updatePrice();
+        }
+
+        // Close payment popup
+        function closePaymentPopup() {
+            document.getElementById('paymentPopup').style.display = 'none';
+        }
+
+        // Close success popup
+        function closePopup() {
+            document.getElementById('successPopup').style.display = 'none';
+        }
+
+        // Open WhatsApp
+        function openWhatsApp() {
+            if (!currentOrder) return;
+            
+            const message = `Order Follow-up
+
+Order ID: ${currentOrder.id}
+Username: ${currentOrder.username}
+Package: ${currentOrder.package}
+Type: ${currentOrder.type}
+
+Please provide order update.`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        // Send WhatsApp notification to admin
+        function sendWhatsAppNotification(order) {
+            let message = '';
+            
+            if (order.price === 0) {
+                message = `🎁 *FREE ORDER RECEIVED* 🎁
+
+📧 Customer Details:
+👤 Username: ${order.username}
+📧 Email: ${order.email}
+📱 WhatsApp: ${order.phone}
+
+📦 Order Details:
+✨ Package: ${order.package}
+💰 Amount: ₹${order.price} (FREE)
+🆔 Order ID: ${order.id}
+⏰ Time: ${order.timestamp}
+
+✅ *Status:* FREE ORDER CONFIRMED
+⚡ *Action Required:* Deliver free followers!`;
+            } else {
+                message = `💰 *PAID ORDER RECEIVED* 💰
+
+📧 Customer Details:
+👤 Username: ${order.username}
+📧 Email: ${order.email}
+📱 WhatsApp: ${order.phone}
+
+💰 Order Details:
+📦 Package: ${order.package}
+💵 Amount: ₹${order.price}
+🆔 Order ID: ${order.id}
+🔗 Reference ID: ${order.reference_id}
+⏰ Time: ${order.timestamp}
+
+✅ *Status:* PAYMENT CONFIRMED
+⚡ *Action Required:* Process this order!`;
+            }
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        // Save order
+        function saveOrder(order) {
+            let orders = JSON.parse(localStorage.getItem('instagramOrders')) || [];
+            orders.unshift(order);
+            localStorage.setItem('instagramOrders', JSON.stringify(orders));
+            updateDashboard();
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const orders = JSON.parse(localStorage.getItem('instagramOrders')) || [];
+            
+            // Calculate stats
+            const totalOrders = orders.length;
+            const totalRevenue = orders.reduce((sum, order) => sum + order.price, 0);
+            const freeOrders = orders.filter(order => order.price === 0).length;
+            const paidOrders = orders.filter(order => order.price > 0).length;
+
+            // Update display
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalRevenue').textContent = `₹${totalRevenue}`;
+            document.getElementById('freeOrders').textContent = freeOrders;
+            document.getElementById('paidOrders').textContent = paidOrders;
+
+            // Update order list
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = '';
+            
+            const recentOrders = orders.slice(0, 5);
+            recentOrders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.className = 'bg-gray-700 p-3 rounded-lg';
+                orderElement.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <strong>${order.username}</strong>
+                            <div class="text-sm text-gray-300">${order.package}</div>
+                            <div class="text-xs ${order.price === 0 ? 'text-blue-400' : 'text-green-400'}">
+                                ${order.price === 0 ? '🆓 FREE' : '💰 ₹' + order.price}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-yellow-400">${order.timestamp}</div>
+                            <div class="text-xs text-gray-400">${order.id}</div>
+                        </div>
+                    </div>
+                `;
+                orderList.appendChild(orderElement);
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
