@@ -42,50 +42,36 @@
     <!-- Payment Popup -->
     <div id="paymentPopup" class="popup-overlay">
         <div class="popup-content">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4" id="popupTitle">Payment Required</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Complete Payment</h2>
             
             <div class="bg-white p-4 rounded-lg border-2 border-green-500 mb-4">
-                <div id="paymentSection">
-                    <!-- Payment Details -->
-                    <div class="mb-4">
-                        <div class="bg-gray-100 p-4 rounded-lg mb-3 text-center">
-                            <i class="fas fa-qrcode text-4xl text-gray-600 mb-2"></i>
-                            <p class="text-sm text-gray-600">Scan QR Code to Pay</p>
-                        </div>
-                        
-                        <div class="bg-yellow-100 p-3 rounded-lg">
-                            <p class="text-sm text-yellow-800 font-bold">
-                                <i class="fas fa-user mr-1"></i>
-                                Pawan Gupta
-                            </p>
-                            <p class="text-sm text-yellow-800">
-                                <i class="fas fa-phone mr-1"></i>
-                                9956708456@fam
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- UPI Reference Input -->
-                    <div class="mb-4 text-left">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-receipt mr-1"></i>
-                            UPI Transaction ID *
-                        </label>
-                        <input type="text" 
-                               id="referenceId"
-                               placeholder="Enter UPI Transaction ID"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 text-black"
-                               required>
-                    </div>
+                <!-- Your New QR Code Section -->
+                <div class="text-center mb-4">
+                    <img src="qrcode_1.jpg" alt="Scan QR Code to Pay" class="w-48 h-48 mx-auto mb-3 border-2 border-gray-300 rounded-lg">
+                    <p class="text-sm text-gray-600 font-bold">Scan QR Code to Pay</p>
+                </div>
+                
+                <!-- Payment Details -->
+                <div class="bg-yellow-100 p-3 rounded-lg mb-4">
+                    <p class="text-lg text-yellow-800 font-bold text-center">
+                        9956708456@fam
+                    </p>
+                    <p class="text-sm text-yellow-700 text-center">
+                        Name: Pawan Gupta
+                    </p>
                 </div>
 
-                <div id="freeSection" class="hidden">
-                    <!-- Free Order Confirmation -->
-                    <div class="bg-green-100 p-4 rounded-lg mb-4">
-                        <i class="fas fa-gift text-4xl text-green-600 mb-3"></i>
-                        <h3 class="text-lg font-bold text-green-800">FREE ORDER</h3>
-                        <p class="text-sm text-green-700">No payment required for free followers!</p>
-                    </div>
+                <!-- UPI Reference Input -->
+                <div class="text-left mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-receipt mr-1"></i>
+                        UPI Transaction ID *
+                    </label>
+                    <input type="text" 
+                           id="referenceId"
+                           placeholder="Enter UPI Transaction ID"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 text-black"
+                           required>
                 </div>
             </div>
 
@@ -97,9 +83,9 @@
             </div>
 
             <div class="space-y-3">
-                <button onclick="processOrder()" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600" id="confirmButton">
+                <button onclick="verifyPayment()" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600">
                     <i class="fas fa-check-circle mr-2"></i>
-                    CONFIRM PAYMENT
+                    VERIFY PAYMENT
                 </button>
                 <button onclick="closePaymentPopup()" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
                     Cancel
@@ -114,13 +100,18 @@
             <div class="text-green-500 text-6xl mb-4">
                 <i class="fas fa-check-circle"></i>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4" id="successTitle">Order Confirmed!</h2>
-            <p class="text-gray-600 mb-2" id="successMessage">Your order has been confirmed</p>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Payment Successful!</h2>
+            <p class="text-gray-600 mb-2">Your payment has been verified successfully!</p>
             <p class="text-gray-600 mb-4">Delivery within 24 hours</p>
+            
+            <div class="bg-green-50 p-3 rounded-lg mb-4">
+                <p class="text-sm text-green-700" id="successPaymentId"></p>
+                <p class="text-xs text-green-600" id="successOrderId"></p>
+            </div>
             
             <button onclick="openWhatsApp()" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold mb-3 hover:bg-green-600">
                 <i class="fab fa-whatsapp mr-2"></i>
-                Message on WhatsApp
+                Track Order on WhatsApp
             </button>
             
             <button onclick="closePopup()" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
@@ -156,7 +147,6 @@
                     <input type="tel" id="phone" placeholder="WhatsApp Number" 
                            class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-4 focus:outline-none focus:border-blue-500" required>
 
-                    <!-- CORRECTED PRICE PACKAGES -->
                     <select id="package" class="w-full px-4 py-3 rounded-lg bg-gray-600 border border-gray-500 mb-6 focus:outline-none focus:border-blue-500" onchange="updatePrice()">
                         <option value="10" data-price="0">10 Followers - FREE</option>
                         <option value="500" data-price="99">500 Followers - ₹99</option>
@@ -168,7 +158,7 @@
                         Amount: ₹0
                     </div>
 
-                    <button type="button" onclick="processOrderBasedOnPackage()" 
+                    <button type="button" onclick="processOrder()" 
                             class="w-full instagram-gradient text-white py-4 rounded-lg font-bold text-lg hover:opacity-90 transition duration-300">
                         <i class="fas fa-paper-plane mr-2"></i>
                         PLACE ORDER
@@ -217,7 +207,6 @@
         const ADMIN_WHATSAPP = "917080562910";
         
         let currentOrder = null;
-        let isFreeOrder = false;
 
         // Update price display
         function updatePrice() {
@@ -225,16 +214,13 @@
             const selectedOption = packageSelect.options[packageSelect.selectedIndex];
             const price = parseInt(selectedOption.getAttribute('data-price'));
             document.getElementById('priceDisplay').textContent = `Amount: ₹${price}`;
-            
-            // Check if free package
-            isFreeOrder = (price === 0);
         }
 
         // Initialize
         updatePrice();
 
-        // Process order based on package type
-        function processOrderBasedOnPackage() {
+        // Process order
+        function processOrder() {
             const packageSelect = document.getElementById('package');
             const selectedOption = packageSelect.options[packageSelect.selectedIndex];
             const price = parseInt(selectedOption.getAttribute('data-price'));
@@ -264,61 +250,39 @@
 
             // If free order, process directly
             if (price === 0) {
-                showFreeOrderPopup();
+                completeFreeOrder();
             } else {
                 showPaymentPopup();
             }
         }
 
-        // Show payment popup for paid orders
+        // Show payment popup
         function showPaymentPopup() {
-            document.getElementById('popupTitle').textContent = 'Payment Required';
-            document.getElementById('paymentSection').classList.remove('hidden');
-            document.getElementById('freeSection').classList.add('hidden');
-            document.getElementById('confirmButton').innerHTML = '<i class="fas fa-check-circle mr-2"></i>CONFIRM PAYMENT';
-            
             document.getElementById('paymentAmountDisplay').textContent = `Amount: ₹${currentOrder.price}`;
             document.getElementById('orderIdDisplay').textContent = `Order ID: ${currentOrder.id}`;
-            
-            // Clear previous inputs
             document.getElementById('referenceId').value = '';
             
             document.getElementById('paymentPopup').style.display = 'block';
         }
 
-        // Show free order popup
-        function showFreeOrderPopup() {
-            document.getElementById('popupTitle').textContent = 'Free Order Confirmation';
-            document.getElementById('paymentSection').classList.add('hidden');
-            document.getElementById('freeSection').classList.remove('hidden');
-            document.getElementById('confirmButton').innerHTML = '<i class="fas fa-gift mr-2"></i>CONFIRM FREE ORDER';
+        // Verify payment
+        function verifyPayment() {
+            const referenceId = document.getElementById('referenceId').value;
+            if (!referenceId) {
+                alert('Please enter UPI Transaction ID');
+                return;
+            }
             
-            document.getElementById('paymentAmountDisplay').textContent = 'Amount: ₹0 (FREE)';
-            document.getElementById('orderIdDisplay').textContent = `Order ID: ${currentOrder.id}`;
+            currentOrder.reference_id = referenceId;
+            currentOrder.status = 'paid';
             
-            document.getElementById('paymentPopup').style.display = 'block';
+            completeOrder();
         }
 
-        // Process order (both free and paid)
-        function processOrder() {
-            if (!currentOrder) return;
-
-            if (currentOrder.price === 0) {
-                // Free order - no payment verification needed
-                currentOrder.status = 'confirmed';
-                completeOrder();
-            } else {
-                // Paid order - verify payment details
-                const referenceId = document.getElementById('referenceId').value;
-                if (!referenceId) {
-                    alert('Please enter UPI Transaction ID');
-                    return;
-                }
-                
-                currentOrder.reference_id = referenceId;
-                currentOrder.status = 'paid';
-                completeOrder();
-            }
+        // Complete free order
+        function completeFreeOrder() {
+            currentOrder.status = 'confirmed';
+            completeOrder();
         }
 
         // Complete order process
@@ -326,21 +290,19 @@
             // Save order
             saveOrder(currentOrder);
 
-            // Send WhatsApp notification
-            sendWhatsAppNotification(currentOrder);
+            // Send notification to admin
+            sendAdminNotification(currentOrder);
 
             // Show success popup
             document.getElementById('paymentPopup').style.display = 'none';
             
-            // Update success message based on order type
             if (currentOrder.price === 0) {
-                document.getElementById('successTitle').textContent = 'Free Order Confirmed!';
-                document.getElementById('successMessage').textContent = 'Your free followers will be delivered soon!';
+                document.getElementById('successPaymentId').textContent = 'Free Order - No Payment Required';
             } else {
-                document.getElementById('successTitle').textContent = 'Payment Verified!';
-                document.getElementById('successMessage').textContent = 'Your payment has been verified successfully!';
+                document.getElementById('successPaymentId').textContent = `Transaction ID: ${currentOrder.reference_id}`;
             }
             
+            document.getElementById('successOrderId').textContent = `Order ID: ${currentOrder.id}`;
             document.getElementById('successPopup').style.display = 'block';
 
             // Reset form
@@ -367,7 +329,7 @@
 Order ID: ${currentOrder.id}
 Username: ${currentOrder.username}
 Package: ${currentOrder.package}
-Type: ${currentOrder.type}
+Transaction ID: ${currentOrder.reference_id || 'N/A'}
 
 Please provide order update.`;
 
@@ -376,8 +338,8 @@ Please provide order update.`;
             window.open(whatsappURL, '_blank');
         }
 
-        // Send WhatsApp notification to admin
-        function sendWhatsAppNotification(order) {
+        // Send admin notification
+        function sendAdminNotification(order) {
             let message = '';
             
             if (order.price === 0) {
@@ -408,7 +370,7 @@ Please provide order update.`;
 📦 Package: ${order.package}
 💵 Amount: ₹${order.price}
 🆔 Order ID: ${order.id}
-🔗 Reference ID: ${order.reference_id}
+🔗 Transaction ID: ${order.reference_id}
 ⏰ Time: ${order.timestamp}
 
 ✅ *Status:* PAYMENT CONFIRMED
@@ -450,6 +412,9 @@ Please provide order update.`;
             
             const recentOrders = orders.slice(0, 5);
             recentOrders.forEach(order => {
+                const statusColor = order.price === 0 ? 'text-blue-400' : 'text-green-400';
+                const statusText = order.price === 0 ? '🆓 FREE' : '💰 PAID';
+
                 const orderElement = document.createElement('div');
                 orderElement.className = 'bg-gray-700 p-3 rounded-lg';
                 orderElement.innerHTML = `
@@ -457,8 +422,8 @@ Please provide order update.`;
                         <div>
                             <strong>${order.username}</strong>
                             <div class="text-sm text-gray-300">${order.package}</div>
-                            <div class="text-xs ${order.price === 0 ? 'text-blue-400' : 'text-green-400'}">
-                                ${order.price === 0 ? '🆓 FREE' : '💰 ₹' + order.price}
+                            <div class="text-xs ${statusColor}">
+                                ${statusText} ${order.price > 0 ? '₹' + order.price : ''}
                             </div>
                         </div>
                         <div class="text-right">
